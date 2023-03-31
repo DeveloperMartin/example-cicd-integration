@@ -46,6 +46,6 @@ jobs:
           
       - name: Run job in jenkins
         run: |
-         curl -X POST -H "Content-type: application/json" "URL"
+         curl -X POST -H "Content-type: application/json" "http://34.95.212.168:8080/generic-webhook-trigger/invoke?token=12345"
       
       
