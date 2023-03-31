@@ -1,0 +1,51 @@
+name: Upload to google cloud VPS
+
+on:
+  push:
+    tags:
+      - 'v*'
+      
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    
+    
+    strategy:
+        matrix:
+          node-version: [16.x]
+          
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+    
+      
+      - name: Login to Github Container Regitry (ghcr)
+        uses: docker/login-actions@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.TOKEN_PACKAGE_ACCESS }}
+          
+      - name: Build and push docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/developermartin/example-cicd-integration:${{ github.ref_name }}
+          
+      - name: Build and push docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/developermartin/example-cicd-integration:latest
+          
+      - name: Run job in jenkins
+        run: |
+         curl -X POST -H "Content-type: application/json" "URL"
+      
+      
